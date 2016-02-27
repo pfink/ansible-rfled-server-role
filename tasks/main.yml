@@ -1,0 +1,15 @@
+---
+- name: install python3
+  package: name=python3 state=present
+- name: install python3-yaml
+  package: name=python3-yaml state=present
+- name: install python3-serial if needed
+  package: name=python3-serial state=present
+- name: install git
+  package: name=git state=present
+- name: checkout milight code
+  git: repo=https://github.com/pfink/RFLED-Server.git dest={{ milight_installdir }} update=yes force=yes
+- name: Ensures {{ milight_configdir }} dir exists
+  file: path={{ milight_configdir }} state=directory
+- name: copy config file
+  copy: src=config.yaml dest={{ milight_configdir }}/config.yaml

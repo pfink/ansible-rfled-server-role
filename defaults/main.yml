@@ -1,0 +1,3 @@
+---
+milight_configdir: /etc/rfled-server
+milight_installdir: /home/milight
