@@ -12,4 +12,4 @@
 - name: Ensures {{ milight_configdir }} dir exists
   file: path={{ milight_configdir }} state=directory
 - name: copy config file
-  copy: src=config.yaml dest={{ milight_configdir }}/config.yaml
+  copy: src=config.yml dest={{ milight_configdir }}/config.yml
