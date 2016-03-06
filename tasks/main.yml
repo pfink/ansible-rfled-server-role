@@ -5,6 +5,8 @@
   package: name=python3-yaml state=present
 - name: install python3-serial if needed
   package: name=python3-serial state=present
+- name: install iproute2
+  package: name=iproute2 state=present
 - name: install git
   package: name=git state=present
 - name: add network interfaces
