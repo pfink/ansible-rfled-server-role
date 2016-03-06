@@ -7,6 +7,10 @@
   package: name=python3-serial state=present
 - name: install git
   package: name=git state=present
+- name: add network interfaces
+  networkd: name='eth0.milight1' type=macvlan mac=00:11:22:33:44:55 ip4=192.168.0.52 gw4=192.168.0.1
+- name: add network interfaces2
+  networkd: name='eth0' type=bond mac=B8:27:EB:51:5D:78 macvlan='eth0.milight1' vlan_type='host'
 - name: checkout milight code
   git: repo=https://github.com/pfink/RFLED-Server.git dest={{ milight_installdir }} update=yes force=yes
 - name: Ensures {{ milight_configdir }} dir exists
