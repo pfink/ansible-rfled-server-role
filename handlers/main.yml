@@ -1,0 +1,4 @@
+- name: reload systemd-networkd
+  service: name=systemd-networkd state=restarted
+- name: restart rfled-server
+  service: name=rfled-server state=restarted
