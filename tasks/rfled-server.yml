@@ -1,3 +1,5 @@
+- name: install git
+  package: name=git state=present
 - name: checkout milight code
   git: repo=https://github.com/pfink/RFLED-Server.git dest={{ milight_installdir }} update=yes force=yes
   notify: restart rfled-server
@@ -6,5 +8,3 @@
 - name: generate config file
   template: src=milight_config.j2 dest={{ milight_configdir }}/config.yml
   notify: restart rfled-server
-- name: install git
-  package: name=git state=present
