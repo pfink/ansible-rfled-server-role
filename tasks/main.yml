@@ -7,6 +7,10 @@
   package: name=python3-serial state=present
 - name: install iproute2
   package: name=iproute2 state=present
+  register: iproute2
+- name: reload ansible facts
+  action: setup
+  when: iproute2|changed
 - name: install git
   package: name=git state=present
 - name: add network interfaces
