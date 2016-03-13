@@ -1,0 +1,6 @@
+- name: install python3
+  package: name=python3 state=present
+- name: install python3-yaml
+  package: name=python3-yaml state=present
+- name: install python3-serial if needed
+  package: name=python3-serial state=present

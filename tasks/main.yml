@@ -1,31 +1,4 @@
 ---
-- name: install python3
-  package: name=python3 state=present
-- name: install python3-yaml
-  package: name=python3-yaml state=present
-- name: install python3-serial if needed
-  package: name=python3-serial state=present
-- name: install iproute2
-  package: name=iproute2 state=present
-  register: iproute2
-- name: reload ansible facts
-  action: setup
-  when: iproute2|changed
-- name: install git
-  package: name=git state=present
-- name: add network interfaces
-  networkd: name="eth0.milight{{ item.0 }}" type=macvlan mac="{{ item.1['mac'] }}" ip4="{{item.1['ip']}}" gw4="{{ ipv4gateway }}"
-  with_indexed_items: "{{ milight_config['interfaces'] }}"
-  when: item.0 != 0 # skip first because it binds to the main network adapter / ip
-  notify: reload systemd-networkd
-- name: add network interfaces2
-  networkd: name='eth0' type=bond mac=B8:27:EB:51:5D:78 macvlan="eth0.milight{{ range(1, milight_config['interfaces']|count) | join(' eth0.milight') }}" vlan_type='host'
-  notify: reload systemd-networkd
-- name: checkout milight code
-  git: repo=https://github.com/pfink/RFLED-Server.git dest={{ milight_installdir }} update=yes force=yes
-  notify: restart rfled-server
-- name: Ensures {{ milight_configdir }} dir exists
-  file: path={{ milight_configdir }} state=directory
-- name: generate config file
-  template: src=milight_config.j2 dest={{ milight_configdir }}/config.yml
-  notify: restart rfled-server
+- include: networking.yml
+- include: python-dependencies.yml
+- include: rfled-server.yml
