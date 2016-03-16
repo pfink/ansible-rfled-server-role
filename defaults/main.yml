@@ -2,6 +2,15 @@
 ipv4gateway: "{{ ansible_default_ipv4['gateway'] }}"
 milight_installdir: /home/milight
 milight_configdir: /etc/rfled-server
+
+# You can either use the next 2 variables or milight_config['interfaces']. The latter will have pecedence.
+milight_main_interface:
+    - ip: "{{ ansible_eth0['ipv4']['address'] }}"
+      mac: "{{ ansible_eth0['macaddress'] }}"
+      serial: /dev/ttyAMA0
+milight_additional_interfaces:
+## add more interfaces here if needed ##
+
 milight_config:
   # General settings
 
@@ -9,14 +18,8 @@ milight_config:
 
   # Network and serial interface mapping
 
-  interfaces:
-    - ip: "{{ ansible_eth0['ipv4']['address'] }}"
-      mac: "{{ ansible_eth0['macaddress'] }}"
-      serial: /dev/ttyAMA0
-    - ip: 192.168.0.52
-      mac: 00:11:22:33:44:55
-      serial: /dev/ttyUSB0
-    ## add more interfaces here if needed ##
+  interfaces: "{{ milight_main_interface + milight_additional_interfaces }}"
+
 
   # Network settings
 
