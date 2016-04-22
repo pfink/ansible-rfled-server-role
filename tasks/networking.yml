@@ -10,5 +10,5 @@
   when: item.0 != 0 # skip first because it binds to the main network adapter / ip
   notify: reload systemd-networkd
 - name: add network interfaces2
-  networkd: name='eth0' type=bond mac="{{ milight_config['interfaces'][0]['mac'] }}" macvlan="eth0.milight{{ range(1, milight_config['interfaces']|count) | join(' eth0.milight') }}" vlan_type='host'
+  networkd: name='eth0' type=bond mac="{{ milight_config['interfaces'][0]['mac'] }}" ip4="{{ milight_config['interfaces'][0]['ip'] }}" gw4="{{ ipv4gateway }}" macvlan="eth0.milight{{ range(1, milight_config['interfaces']|count) | join(' eth0.milight') }}" vlan_type='host'
   notify: reload systemd-networkd
