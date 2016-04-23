@@ -12,3 +12,8 @@
 - name: add network interfaces2
   networkd: name='eth0' type=bond mac="{{ milight_config['interfaces'][0]['mac'] }}" ip4="{{ milight_config['interfaces'][0]['ip'] }}" gw4="{{ ipv4gateway }}" macvlan="eth0.milight{{ range(1, milight_config['interfaces']|count) | join(' eth0.milight') }}" vlan_type='host'
   notify: reload systemd-networkd
+
+# On Debian Jessie, dhcpcd removes the IP of macvlan interface on boot due to unknown reasons
+- name: Dirty workaround for boot problem in Debian Jessie
+  blockinfile: dest=/etc/rc.local block="sleep 5\nservice systemd-networkd restart\nservice rfled-server restart"
+  when: ansible_distribution == "Debian" and ansible_distribution_major_version == "8"
