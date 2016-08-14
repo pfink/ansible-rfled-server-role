@@ -4,16 +4,20 @@
 - name: reload ansible facts
   action: setup
   when: iproute2|changed
+- name: Disable dhcpcd
+  service: name=dhcpcd state=stopped enabled=no
 - name: add network interfaces
   networkd: name="eth0.milight{{ item.0 }}" type=macvlan mac="{{ item.1['mac'] }}" ip4="{{item.1['ip']}}" gw4="{{ ipv4gateway }}"
   with_indexed_items: "{{ milight_config['interfaces'] }}"
   when: item.0 != 0 # skip first because it binds to the main network adapter / ip
   notify: reload systemd-networkd
-- name: add network interfaces2
+- name: add network interfaces2 - with DHCP
+  networkd: name='eth0' type=bond mac="{{ milight_config['interfaces'][0]['mac'] }}" dhcp=yes macvlan="eth0.milight{{ range(1, milight_config['interfaces']|count) | join(' eth0.milight') }}" vlan_type='host'
+  when: "'dhcp' in milight_main_interface[0] and milight_main_interface[0]['dhcp']"
+  register: elsevar
+- name: add network interfaces2 - without DHCP
   networkd: name='eth0' type=bond mac="{{ milight_config['interfaces'][0]['mac'] }}" ip4="{{ milight_config['interfaces'][0]['ip'] }}" gw4="{{ ipv4gateway }}" macvlan="eth0.milight{{ range(1, milight_config['interfaces']|count) | join(' eth0.milight') }}" vlan_type='host'
+  when: elsevar|skipped
   notify: reload systemd-networkd
-
-# On Debian Jessie, dhcpcd removes the IP of macvlan interface on boot due to unknown reasons
-- name: Dirty workaround for boot problem in Debian Jessie
-  blockinfile: dest=/etc/rc.local block="sleep 5\nservice systemd-networkd restart\nservice rfled-server restart"
-  when: ansible_distribution == "Debian" and ansible_distribution_major_version == "8"
+- name: Start/Enable systemd-networkd
+  service: name=systemd-networkd state=started enabled=yes
