@@ -1,7 +1,7 @@
 - name: install git
   package: name=git state=present
 - name: checkout milight code
-  git: repo=https://github.com/pfink/RFLED-Server.git dest={{ milight_installdir }} update=yes force=yes
+  git: repo=https://github.com/pfink/rfled-server-python.git dest={{ milight_installdir }} update=yes force=yes
   notify: restart rfled-server
 - name: Ensures {{ milight_configdir }} dir exists
   file: path={{ milight_configdir }} state=directory
